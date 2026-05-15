@@ -1,4 +1,4 @@
-import { Code2, Link, Mail, MapPin, Phone } from 'lucide-react';
+import { Code2, Globe, Link, Mail, MapPin, Phone } from 'lucide-react';
 import type { CVData, SectionType } from '../../types/cv';
 import { useTranslation } from '../../i18n/useTranslation';
 import { mailHref, urlHref } from '../../utils/links';
@@ -74,6 +74,17 @@ export function PreviewSidebar({ data }: { data: CVData }) {
             >
               <Code2 size={11} className="mt-0.5 shrink-0" />
               <span className="break-all">{personal.github}</span>
+            </a>
+          )}
+          {personal.website && (
+            <a
+              href={urlHref(personal.website)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`flex items-start gap-1.5 ${linkClass}`}
+            >
+              <Globe size={11} className="mt-0.5 shrink-0" />
+              <span className="break-all">{personal.website}</span>
             </a>
           )}
         </div>
