@@ -157,7 +157,7 @@ const pt: Translation = {
     content: 'Conteúdo',
   },
   preview: {
-    about: 'Sobre',
+    about: 'About',
   },
 };
 
