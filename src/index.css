@@ -25,6 +25,9 @@
     margin: 0 !important;
     padding: 0 !important;
     background: #ffffff !important;
+    /* Override dark theme so the browser renders page margins/gutters as
+     * white instead of the dark color-scheme color. */
+    color-scheme: light !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
