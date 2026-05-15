@@ -5,36 +5,39 @@ import { usePersistentState } from './hooks/usePersistentState';
 import { useTranslation } from './i18n/useTranslation';
 import { downloadCVAsJSON } from './utils/fileHelpers';
 import { TopBar } from './components/layout/TopBar';
+import { MobileNav } from './components/layout/MobileNav';
 import { PersonalInfoForm } from './components/editor/PersonalInfoForm';
 import { SectionsEditor } from './components/editor/SectionsEditor';
 import { CVPreview } from './components/preview/CVPreview';
 
-// Thin top-level orchestrator. Owns the CV state and wires the topbar,
-// editor and preview together. All actual UI lives in dedicated components.
 export default function App() {
   const { language } = useTranslation();
   const [data, setData] = usePersistentState<CVData>(STORAGE_KEY, getInitialData(language));
   const [template, setTemplate] = useState<TemplateId>('minimal');
   const [view, setView] = useState<ViewMode>('split');
+  const [mobileTab, setMobileTab] = useState<'edit' | 'preview'>('edit');
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth < 768,
+  );
 
-  // Track previous language so we can compare against the right initialData.
   const prevLangRef = useRef(language);
-  // Always keep a ref to latest data to avoid stale closure in the effect.
   const dataRef = useRef(data);
   dataRef.current = data;
 
   useEffect(() => {
     const prevLang = prevLangRef.current;
     prevLangRef.current = language;
-
     if (prevLang === language) return;
-
-    // If nothing was changed from the initial data of the previous language,
-    // automatically translate the CV content to the new language as well.
     if (JSON.stringify(dataRef.current) === JSON.stringify(getInitialData(prevLang))) {
       setData(getInitialData(language));
     }
   }, [language, setData]);
+
+  useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', update, { passive: true });
+    return () => window.removeEventListener('resize', update);
+  }, []);
 
   const updatePersonal = (patch: Partial<Personal>) => {
     setData({ ...data, personal: { ...data.personal, ...patch } });
@@ -42,10 +45,18 @@ export default function App() {
 
   const handleExportPDF = () => window.print();
 
+  // Mobile: panels controlled by mobileTab
+  // Desktop: panels controlled by view
+  const editorMobileClass = mobileTab === 'edit' ? 'block' : 'hidden';
+  const editorDesktopClass = view === 'edit' || view === 'split' ? 'md:block' : 'md:hidden';
+
+  const previewMobileClass = mobileTab === 'preview' ? 'flex' : 'hidden';
+  const previewDesktopClass = view === 'preview' || view === 'split' ? 'md:flex' : 'md:hidden';
+
   return (
     <div
       className="min-h-screen bg-stone-100 dark:bg-stone-950 text-stone-900 dark:text-stone-100 transition-colors"
-      style={{ fontFamily: '"Inter", -apple-system, system-ui, sans-serif' }}
+      style={{ fontFamily: 'var(--font-body)' }}
     >
       <TopBar
         template={template}
@@ -57,36 +68,37 @@ export default function App() {
       />
 
       <div
-        className={`max-w-400 mx-auto px-6 py-6 grid gap-6 ${
-          view === 'split' ? 'grid-cols-[420px_1fr]' : 'grid-cols-1'
+        className={`max-w-400 mx-auto px-4 md:px-6 py-4 md:py-6 grid gap-6 pb-mobile-nav md:pb-6 ${
+          view === 'split' ? 'md:grid-cols-[420px_1fr]' : 'grid-cols-1'
         }`}
       >
-        {(view === 'edit' || view === 'split') && (
-          <div className="no-print">
-            <PersonalInfoForm personal={data.personal} onChange={updatePersonal} />
-            <SectionsEditor
-              data={data}
-              onChange={setData}
-              onReset={() => setData(getInitialData(language))}
-            />
-          </div>
-        )}
+        {/* Editor panel */}
+        <div className={`no-print ${editorMobileClass} ${editorDesktopClass}`}>
+          <PersonalInfoForm personal={data.personal} onChange={updatePersonal} />
+          <SectionsEditor
+            data={data}
+            onChange={setData}
+            onReset={() => setData(getInitialData(language))}
+          />
+        </div>
 
-        {(view === 'preview' || view === 'split') && (
-          <div className="flex justify-center">
-            <div
-              id="print-area"
-              className="shadow-xl rounded-lg overflow-hidden"
-              style={{
-                transform: view === 'split' ? 'scale(0.78)' : 'scale(1)',
-                transformOrigin: 'top center',
-              }}
-            >
-              <CVPreview data={data} template={template} />
-            </div>
+        {/* Preview panel */}
+        <div className={`justify-center ${previewMobileClass} ${previewDesktopClass}`}>
+          <div
+            id="print-area"
+            className="shadow-xl rounded-lg overflow-hidden cv-mobile-zoom"
+            style={{
+              transform: !isMobile && view === 'split' ? 'scale(0.78)' : 'scale(1)',
+              transformOrigin: 'top center',
+            }}
+          >
+            <CVPreview data={data} template={template} />
           </div>
-        )}
+        </div>
       </div>
+
+      {/* Mobile bottom navigation */}
+      <MobileNav tab={mobileTab} onTabChange={setMobileTab} onExportPDF={handleExportPDF} />
     </div>
   );
 }

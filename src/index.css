@@ -1,5 +1,48 @@
 @import "tailwindcss";
 
+:root {
+  --font-display: 'Syne', system-ui, sans-serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+}
+
+/* Mobile bottom-nav clearance — applied to the main scroll container */
+.pb-mobile-nav {
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+}
+
+/* Mobile slide-up animation for the settings drawer */
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease forwards;
+}
+
+/* Scale the CV preview to fit the mobile viewport */
+@media (max-width: 767px) {
+  .cv-mobile-zoom {
+    zoom: 0.45;
+  }
+}
+
+/* Undo the mobile zoom when printing so the PDF renders at full resolution */
+@media print {
+  .cv-mobile-zoom {
+    zoom: 1 !important;
+  }
+}
+
 /* Enable class-based dark mode so toggling .dark on <html> opts the UI
  * into the `dark:` variant without depending on the OS preference. */
 @custom-variant dark (&:where(.dark, .dark *));
