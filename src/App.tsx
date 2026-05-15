@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { CVData, Personal, TemplateId, ViewMode } from './types/cv';
-import { initialData, STORAGE_KEY } from './data/initialData';
+import { getInitialData, STORAGE_KEY } from './data/initialData';
 import { usePersistentState } from './hooks/usePersistentState';
+import { useTranslation } from './i18n/useTranslation';
 import { downloadCVAsJSON } from './utils/fileHelpers';
 import { TopBar } from './components/layout/TopBar';
 import { PersonalInfoForm } from './components/editor/PersonalInfoForm';
@@ -11,9 +12,29 @@ import { CVPreview } from './components/preview/CVPreview';
 // Thin top-level orchestrator. Owns the CV state and wires the topbar,
 // editor and preview together. All actual UI lives in dedicated components.
 export default function App() {
-  const [data, setData] = usePersistentState<CVData>(STORAGE_KEY, initialData);
+  const { language } = useTranslation();
+  const [data, setData] = usePersistentState<CVData>(STORAGE_KEY, getInitialData(language));
   const [template, setTemplate] = useState<TemplateId>('minimal');
   const [view, setView] = useState<ViewMode>('split');
+
+  // Track previous language so we can compare against the right initialData.
+  const prevLangRef = useRef(language);
+  // Always keep a ref to latest data to avoid stale closure in the effect.
+  const dataRef = useRef(data);
+  dataRef.current = data;
+
+  useEffect(() => {
+    const prevLang = prevLangRef.current;
+    prevLangRef.current = language;
+
+    if (prevLang === language) return;
+
+    // If nothing was changed from the initial data of the previous language,
+    // automatically translate the CV content to the new language as well.
+    if (JSON.stringify(dataRef.current) === JSON.stringify(getInitialData(prevLang))) {
+      setData(getInitialData(language));
+    }
+  }, [language, setData]);
 
   const updatePersonal = (patch: Partial<Personal>) => {
     setData({ ...data, personal: { ...data.personal, ...patch } });
@@ -46,7 +67,7 @@ export default function App() {
             <SectionsEditor
               data={data}
               onChange={setData}
-              onReset={() => setData(initialData)}
+              onReset={() => setData(getInitialData(language))}
             />
           </div>
         )}
