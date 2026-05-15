@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+/* Enable class-based dark mode so toggling .dark on <html> opts the UI
+ * into the `dark:` variant without depending on the OS preference. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------
+ * Print rules. Targeted at "Export PDF" via window.print().
+ *
+ * Strategy:
+ *   - Hide every element except #print-area and its descendants.
+ *   - Strip the screen-only decoration (shadow, rounded corners,
+ *     overflow:hidden, the split-view transform) so the print is a
+ *     clean 210mm × 297mm page.
+ *   - Force backgrounds to print so the Sidebar template's sidebar
+ *     keeps its tone instead of going white.
+ *
+ * Note: browsers may still inject their own headers/footers (URL,
+ * page number, date). Users should uncheck "Headers and footers" in
+ * the browser's print dialog for a pristine PDF.
+ * ----------------------------------------------------------------- */
+@media print {
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #print-area,
+  #print-area * {
+    visibility: visible;
+  }
+
+  /* Reset every screen-only style applied to the preview wrapper. */
+  #print-area {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Continuation pages get a comfortable top/bottom margin so content
+   * doesn't hug the paper edge. The first page is overridden below: its
+   * visual breathing room comes from the template's own p-10 padding. */
+  @page {
+    size: A4;
+    margin: 14mm 0;
+  }
+
+  @page :first {
+    margin: 0;
+  }
+}
