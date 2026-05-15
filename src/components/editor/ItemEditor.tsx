@@ -15,11 +15,11 @@ export function ItemEditor({
   const { t } = useTranslation();
 
   const input =
-    'w-full bg-transparent border-none outline-none focus:bg-stone-50 dark:focus:bg-stone-800 rounded px-2 py-1 text-sm text-stone-800 dark:text-stone-100 placeholder:text-stone-400 dark:placeholder:text-stone-500';
-  const inputBold = `${input} font-medium text-stone-800 dark:text-stone-100`;
+    'w-full bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 outline-none focus:border-stone-400 dark:focus:border-stone-500 rounded-md px-2 py-1 text-sm text-stone-800 dark:text-stone-100 placeholder:text-stone-400 dark:placeholder:text-stone-500 transition-colors';
+  const inputBold = `${input} font-medium`;
   const inputMuted = `${input} text-stone-500 dark:text-stone-400 text-xs`;
   const textarea =
-    'w-full bg-transparent border-none outline-none focus:bg-stone-50 dark:focus:bg-stone-800 rounded px-2 py-1 text-sm resize-none text-stone-800 dark:text-stone-100 placeholder:text-stone-400 dark:placeholder:text-stone-500';
+    'w-full bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 outline-none focus:border-stone-400 dark:focus:border-stone-500 rounded-md px-2 py-1 text-sm resize-none text-stone-800 dark:text-stone-100 placeholder:text-stone-400 dark:placeholder:text-stone-500 transition-colors';
 
   if (type === 'experience') {
     return (
@@ -108,15 +108,15 @@ export function ItemEditor({
 
   if (type === 'skills') {
     return (
-      <div className="flex gap-2">
+      <div className="space-y-1">
         <input
-          className={`${inputBold} w-1/3`}
+          className={inputBold}
           placeholder={t.fields.category}
           value={item.category ?? ''}
           onChange={(e) => onChange({ category: e.target.value })}
         />
         <input
-          className={`${input} flex-1`}
+          className={input}
           placeholder={t.fields.skills}
           value={item.value ?? ''}
           onChange={(e) => onChange({ value: e.target.value })}
@@ -127,15 +127,15 @@ export function ItemEditor({
 
   if (type === 'languages') {
     return (
-      <div className="flex gap-2">
+      <div className="space-y-1">
         <input
-          className={`${inputBold} w-1/3`}
+          className={inputBold}
           placeholder={t.fields.language}
           value={item.language ?? ''}
           onChange={(e) => onChange({ language: e.target.value })}
         />
         <input
-          className={`${input} flex-1`}
+          className={input}
           placeholder={t.fields.level}
           value={item.level ?? ''}
           onChange={(e) => onChange({ level: e.target.value })}
