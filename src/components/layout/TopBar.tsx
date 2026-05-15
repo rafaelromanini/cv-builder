@@ -37,7 +37,7 @@ export function TopBar({
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg overflow-hidden ring-1 ring-stone-200 dark:ring-stone-700 bg-white dark:bg-stone-800 flex items-center justify-center shadow-sm">
             <img
-              src="/favicon.png"
+              src={`${import.meta.env.BASE_URL}favicon.png`}
               alt={t.app.title}
               className="w-full h-full object-contain"
             />
