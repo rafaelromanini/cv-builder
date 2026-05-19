@@ -83,7 +83,7 @@ export default function App() {
         </div>
 
         {/* Preview panel */}
-        <div className={`justify-center ${previewMobileClass} ${previewDesktopClass}`}>
+        <div id="print-area-wrapper" className={`justify-center ${previewMobileClass} ${previewDesktopClass}`}>
           <div
             id="print-area"
             className="shadow-xl rounded-lg overflow-hidden cv-mobile-zoom"

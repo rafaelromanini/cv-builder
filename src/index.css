@@ -79,6 +79,10 @@
     visibility: hidden;
   }
 
+  #print-area-wrapper {
+    display: flex !important;
+  }
+
   #print-area,
   #print-area * {
     visibility: visible;
