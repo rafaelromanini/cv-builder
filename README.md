@@ -2,6 +2,8 @@
 
 A modern, drag-and-drop CV/resume builder that runs entirely in the browser. Pick a template, drag sections around, edit inline, and export to PDF or JSON — no signup, no backend, no tracking. Your CV is persisted locally in `localStorage`.
 
+**🔗 Live: [rafaelromanini.github.io/cv-builder](https://rafaelromanini.github.io/cv-builder/)**
+
 ![Stack](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
 ![Stack](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 ![Stack](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
